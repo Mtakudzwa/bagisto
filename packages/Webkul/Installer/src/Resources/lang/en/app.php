@@ -130,9 +130,9 @@ return [
         'core' => [
             'channels' => [
                 'name'             => 'Default',
-                'meta-title'       => 'Demo store',
-                'meta-keywords'    => 'Demo store meta keyword',
-                'meta-description' => 'Demo store meta description',
+                'meta-title'       => 'Malz Closet',
+                'meta-keywords'    => 'Malz Closet meta keyword',
+                'meta-description' => 'Malz Closet meta description',
             ],
 
             'currencies' => [
