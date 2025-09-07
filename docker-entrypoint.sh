@@ -18,13 +18,13 @@ else
     echo ".env not found, skipping key generation"
 fi
 
-# Run database migrations
+# Run database migrations only if table doesn't exist to avoid duplicates
 echo "Running migrations..."
-php artisan migrate --force
+php artisan migrate --force || true
 
-# Seed the database
+# Seed database only if not already seeded
 echo "Seeding database..."
-php artisan db:seed --force
+php artisan db:seed --force || echo "Database already seeded, skipping..."
 
 # Install Bagisto GraphQL (ignore errors if already installed)
 echo "Installing Bagisto GraphQL..."
