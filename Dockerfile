@@ -31,8 +31,8 @@ RUN composer install --no-dev --optimize-autoloader --working-dir=/var/www/html 
     && chown -R www-data:www-data storage bootstrap/cache vendor themes \
     && chmod -R 775 storage bootstrap/cache
 
-# Install Bagisto GraphQL package (if not present)
-RUN composer require bagisto/bagisto-graphql --working-dir=/var/www/html --no-interaction --optimize-autoloader || echo "GraphQL package already installed"
+# Install Bagisto GraphQL package (correct package name)
+RUN composer require bagisto/graphql-api --working-dir=/var/www/html --no-interaction --optimize-autoloader || echo "GraphQL package already installed"
 
 # Copy entrypoint script
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh

@@ -27,7 +27,7 @@ else
 fi
 
 # Install Bagisto GraphQL only if package exists
-if composer show | grep -q "bagisto/bagisto-graphql"; then
+if composer show | grep -q "bagisto/graphql-api"; then
     echo "Installing Bagisto GraphQL..."
     php artisan bagisto-graphql:install || echo "Bagisto GraphQL already installed, skipping..."
 else
@@ -40,7 +40,6 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 php artisan storage:link
-
 
 # Skip front-end build: use prebuilt assets
 echo "Using prebuilt front-end assets. Skipping npm build."
