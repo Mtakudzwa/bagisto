@@ -5,10 +5,17 @@ echo "=========================================="
 echo "Starting MalzCloset container..."
 echo "=========================================="
 
-# Only generate APP_KEY if .env exists and key is empty
-if [ -f /var/www/html/.env ] && [ -z "$APP_KEY" ]; then
-    echo "Generating APP_KEY..."
-    php artisan key:generate --force
+# Generate APP_KEY if missing
+if [ -f /var/www/html/.env ]; then
+    CURRENT_KEY=$(grep APP_KEY /var/www/html/.env | cut -d '=' -f2)
+    if [ -z "$CURRENT_KEY" ]; then
+        echo "Generating APP_KEY..."
+        php artisan key:generate --force
+    else
+        echo "APP_KEY already set"
+    fi
+else
+    echo ".env not found, skipping key generation"
 fi
 
 # Run database migrations
@@ -29,10 +36,12 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-# Replace Apache port with Railway $PORT
+# Set Apache port to Railway $PORT
+PORT=${PORT:-8080}  # Default to 8080 if $PORT is empty
 echo "Setting Apache port to $PORT..."
-sed -i "s/80/${PORT}/g" /etc/apache2/sites-available/000-default.conf
+sed -i "s/<VirtualHost \*:80>/<VirtualHost *:${PORT}>/g" /etc/apache2/sites-available/000-default.conf
+sed -i "s/Listen 80/Listen ${PORT}/g" /etc/apache2/ports.conf
 
-# Start Apache
+# Start Apache in foreground
 echo "Starting Apache..."
 apache2-foreground

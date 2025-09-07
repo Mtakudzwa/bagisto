@@ -31,8 +31,8 @@ RUN chown -R www-data:www-data storage bootstrap/cache \
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-# Expose port 8080
+# Expose container port (map to Railway $PORT in entrypoint)
 EXPOSE 8080
 
 # Use entrypoint script to start container
-CMD ["docker-entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
