@@ -20,18 +20,17 @@ WORKDIR /var/www/html
 # Copy project files
 COPY . .
 
-# Install PHP dependencies (at build time)
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader || true
-
 # Permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 EXPOSE 8080
 
-# Entrypoint script to run migrations before Apache
-CMD php artisan key:generate --force && \
+# Run Composer + artisan setup on container start, then launch Apache
+CMD composer install --no-interaction --prefer-dist --optimize-autoloader && \
+    php artisan key:generate --force && \
     php artisan migrate --force && \
     php artisan db:seed --force && \
     php artisan bagisto-graphql:install && \
+    php artisan config:cache && \
     apache2-foreground
