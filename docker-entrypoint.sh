@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+# Suppress deprecation warnings
+export COMPOSER_ALLOW_SUPERUSER=1
+export PHP_INI_SCAN_DIR=/usr/local/etc/php/conf.d
+export PHP_ERROR_REPORTING="E_ALL & ~E_DEPRECATED & ~E_STRICT"
+
 echo "=========================================="
 echo "Starting MalzCloset container..."
 echo "=========================================="
@@ -45,11 +50,19 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-# Set Apache port to Railway $PORT
-PORT=${PORT:-8080}  # Default to 8080 if $PORT is empty
+# Set Apache port
+PORT=${PORT:-8080}
 echo "Setting Apache port to $PORT..."
 sed -i "s/<VirtualHost \*:80>/<VirtualHost *:${PORT}>/g" /etc/apache2/sites-available/000-default.conf
 sed -i "s/Listen 80/Listen ${PORT}/g" /etc/apache2/ports.conf
+
+# Point Apache to Laravel public folder
+sed -i "s#/var/www/html#/var/www/html/public#g" /etc/apache2/sites-available/000-default.conf
+
+# Ensure correct permissions
+chown -R www-data:www-data /var/www/html
+chmod -R 755 /var/www/html
+chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Start Apache in foreground
 echo "Starting Apache..."
