@@ -26,6 +26,7 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 
 EXPOSE 8080
 
+# Use Railway's $PORT env var for Apache
 CMD composer install --no-interaction --prefer-dist --optimize-autoloader && \
     php artisan key:generate --force && \
     php artisan migrate --force && \
