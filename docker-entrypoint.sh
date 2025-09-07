@@ -18,17 +18,22 @@ else
     echo ".env not found, skipping key generation"
 fi
 
-# Run database migrations only if table doesn't exist to avoid duplicates
+# Run database migrations
 echo "Running migrations..."
-php artisan migrate --force || true
+php artisan migrate --force
 
-# Seed database only if not already seeded
-echo "Seeding database..."
-php artisan db:seed --force || echo "Database already seeded, skipping..."
+# Check if database is seeded (using cms_pages table as indicator)
+SEEDED=$(php artisan tinker --execute="echo DB::table('cms_pages')->count();")
+if [ "$SEEDED" -eq 0 ]; then
+    echo "Database empty, running seeders..."
+    php artisan db:seed --force
+else
+    echo "Database already seeded, skipping seeders..."
+fi
 
-# Install Bagisto GraphQL (ignore errors if already installed)
+# Install Bagisto GraphQL only if not installed
 echo "Installing Bagisto GraphQL..."
-php artisan bagisto-graphql:install || true
+php artisan bagisto-graphql:install || echo "Bagisto GraphQL already installed, skipping..."
 
 # Cache config, routes, views
 echo "Caching config and routes..."

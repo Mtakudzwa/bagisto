@@ -4,6 +4,7 @@ FROM php:8.4-apache
 # Install system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
     git unzip libpng-dev libonig-dev libxml2-dev zip curl mariadb-client libicu-dev libzip-dev g++ \
+    php-cli php-mbstring php-xml php-bcmath php-intl php-sqlite3 \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd intl zip \
     && docker-php-ext-install calendar || true \
     && docker-php-ext-enable intl zip
@@ -20,18 +21,16 @@ WORKDIR /var/www/html
 # Copy project files
 COPY . .
 
-# Install PHP dependencies at build time
-RUN composer install --no-dev --optimize-autoloader
-
-# Set correct permissions
-RUN chown -R www-data:www-data storage bootstrap/cache \
+# Install PHP dependencies as www-data to avoid permission issues
+RUN composer install --no-dev --optimize-autoloader --working-dir=/var/www/html \
+    && chown -R www-data:www-data storage bootstrap/cache vendor \
     && chmod -R 775 storage bootstrap/cache
 
 # Copy entrypoint script
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-# Expose container port (will be mapped dynamically via entrypoint)
+# Expose container port (mapped dynamically via entrypoint)
 EXPOSE 8080
 
 # Use entrypoint script to start container
