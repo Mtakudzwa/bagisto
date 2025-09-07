@@ -5,8 +5,8 @@ echo "=========================================="
 echo "Starting MalzCloset container..."
 echo "=========================================="
 
-# Ensure APP_KEY exists
-if [ -z "$APP_KEY" ]; then
+# Only generate APP_KEY if .env exists and key is empty
+if [ -f /var/www/html/.env ] && [ -z "$APP_KEY" ]; then
     echo "Generating APP_KEY..."
     php artisan key:generate --force
 fi
@@ -19,7 +19,7 @@ php artisan migrate --force
 echo "Seeding database..."
 php artisan db:seed --force
 
-# Install Bagisto GraphQL
+# Install Bagisto GraphQL (ignore errors if already installed)
 echo "Installing Bagisto GraphQL..."
 php artisan bagisto-graphql:install || true
 
