@@ -1,4 +1,4 @@
-FROM php:8.2-apache
+FROM php:8.1-apache
 
 # Install system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
@@ -21,7 +21,7 @@ WORKDIR /var/www/html
 COPY . .
 
 # Install PHP dependencies (ignore calendar requirement if missing)
-RUN composer install --no-dev --optimize-autoloader --ignore-platform-req=ext-calendar
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd intl zip calendar
 
 # Permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
