@@ -13,7 +13,6 @@ echo "=========================================="
 # Generate APP_KEY if missing
 php artisan key:generate --force
 
-
 # Run database migrations
 echo "Running migrations..."
 php artisan migrate --force
@@ -40,6 +39,20 @@ echo "Caching config and routes..."
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
+
+# Build front-end assets if missing
+echo "Checking front-end assets..."
+THEMES=("shop" "admin")
+for theme in "${THEMES[@]}"; do
+    ASSET_DIR="themes/$theme/default/build"
+    if [ ! -d "$ASSET_DIR" ] || [ -z "$(ls -A $ASSET_DIR)" ]; then
+        echo "Assets missing for $theme theme, building..."
+        npm install --prefix themes/$theme/default
+        npm run production --prefix themes/$theme/default
+    else
+        echo "Assets already built for $theme theme."
+    fi
+done
 
 # Set Apache port
 PORT=${PORT:-8080}
