@@ -39,6 +39,7 @@ echo "Caching config and routes..."
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
+php artisan storage:link
 
 # Skip front-end build: use prebuilt assets
 echo "Using prebuilt front-end assets. Skipping npm build."
