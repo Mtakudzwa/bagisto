@@ -26,11 +26,11 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 
 EXPOSE 8080
 
-# Run Composer + artisan setup on container start, then launch Apache
 CMD composer install --no-interaction --prefer-dist --optimize-autoloader && \
     php artisan key:generate --force && \
     php artisan migrate --force && \
     php artisan db:seed --force && \
     php artisan bagisto-graphql:install && \
     php artisan config:cache && \
+    sed -i "s/80/${PORT}/g" /etc/apache2/sites-available/000-default.conf && \
     apache2-foreground
