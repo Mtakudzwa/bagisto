@@ -7,9 +7,8 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd intl zip calendar \
     && a2enmod rewrite
 
-
-# Enable Apache mod_rewrite
-RUN a2enmod rewrite
+# Set Apache ServerName globally to suppress warning
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 # Install Composer
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer

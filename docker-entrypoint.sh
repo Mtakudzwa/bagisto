@@ -31,9 +31,13 @@ else
     echo "Database already seeded, skipping seeders..."
 fi
 
-# Install Bagisto GraphQL only if not installed
-echo "Installing Bagisto GraphQL..."
-php artisan bagisto-graphql:install || echo "Bagisto GraphQL already installed, skipping..."
+# Install Bagisto GraphQL only if package exists
+if composer show | grep -q "bagisto/bagisto-graphql"; then
+    echo "Installing Bagisto GraphQL..."
+    php artisan bagisto-graphql:install || echo "Bagisto GraphQL already installed, skipping..."
+else
+    echo "Bagisto GraphQL package not installed, skipping..."
+fi
 
 # Cache config, routes, views
 echo "Caching config and routes..."
