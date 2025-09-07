@@ -33,7 +33,7 @@
                     <div class="flex items-center gap-2.5">
                         <a
                             onclick="history.back()"
-                            class="text-sm font-semibold text-blue-600 transition-all hover:underline"
+                            class="text-sm font-semibold text-navyblue-600 transition-all hover:underline"
                         >
                             @lang('admin::app.errors.go-back')
                         </a>
@@ -46,7 +46,7 @@
 
                         <a
                             href="{{ route('admin.dashboard.index') }}"
-                            class="text-sm font-semibold text-blue-600 transition-all hover:underline"
+                            class="text-sm font-semibold text-navyblue-600 transition-all hover:underline"
                         >
                             @lang('admin::app.errors.dashboard')
                         </a>
@@ -57,7 +57,7 @@
                     @lang('admin::app.errors.support', [
                         'link'  => 'mailto:support@malzcloset.co.zw',
                         'email' => 'support@malzcloset.co.zw',
-                        'class' => 'font-semibold text-blue-600 transition-all hover:underline',
+                        'class' => 'font-semibold text-navyblue-600 transition-all hover:underline',
                     ])
                 </p>
             </div>
