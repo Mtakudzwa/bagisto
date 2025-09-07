@@ -34,12 +34,21 @@ else
     echo "Bagisto GraphQL package not installed, skipping..."
 fi
 
+# Clear all Laravel caches
+echo "Clearing all caches..."
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+php artisan cache:clear
+php artisan event:clear
+
 # Cache config, routes, views
 echo "Caching config and routes..."
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 php artisan storage:link
+
 
 # Skip front-end build: use prebuilt assets
 echo "Using prebuilt front-end assets. Skipping npm build."
