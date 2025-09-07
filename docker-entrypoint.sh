@@ -11,14 +11,12 @@ echo "Starting MalzCloset container..."
 echo "=========================================="
 
 # Generate APP_KEY if missing
-if [ -f /var/www/html/.env ]; then
-    CURRENT_KEY=$(grep APP_KEY /var/www/html/.env | cut -d '=' -f2)
-    if [ -z "$CURRENT_KEY" ]; then
-        echo "Generating APP_KEY..."
-        php artisan key:generate --force
-    else
-        echo "APP_KEY already set"
-    fi
+# Always ensure APP_KEY exists
+if ! php artisan env:display | grep -q 'APP_KEY='; then
+    echo "Generating APP_KEY..."
+    php artisan key:generate --force
+fi
+
 else
     echo ".env not found, skipping key generation"
 fi
