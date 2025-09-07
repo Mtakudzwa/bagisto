@@ -6,6 +6,9 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd intl zip \
     && docker-php-ext-enable intl zip
 
+# Try enabling calendar, ignore if not available
+RUN docker-php-ext-install calendar || true
+
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
 
@@ -17,14 +20,13 @@ WORKDIR /var/www/html
 # Copy project files
 COPY . .
 
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader
+# Install PHP dependencies (ignore calendar requirement if missing)
+RUN composer install --no-dev --optimize-autoloader --ignore-platform-req=ext-calendar
 
-# Fix permissions
+# Permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 EXPOSE 8080
 
-# Start Apache (don’t run migrations on every container restart)
 CMD ["apache2-foreground"]
