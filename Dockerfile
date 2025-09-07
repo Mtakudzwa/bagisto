@@ -20,8 +20,8 @@ WORKDIR /var/www/html
 # Copy project files
 COPY . .
 
-# Install PHP dependencies (ignore calendar requirement if missing)
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd intl zip calendar
+# Install PHP dependencies (at build time)
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader || true
 
 # Permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
@@ -29,4 +29,9 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 
 EXPOSE 8080
 
-CMD ["apache2-foreground"]
+# Entrypoint script to run migrations before Apache
+CMD php artisan key:generate --force && \
+    php artisan migrate --force && \
+    php artisan db:seed --force && \
+    php artisan bagisto-graphql:install && \
+    apache2-foreground
