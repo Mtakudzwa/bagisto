@@ -11,15 +11,17 @@ echo "Starting MalzCloset container..."
 echo "=========================================="
 
 # Generate APP_KEY if missing
-# Always ensure APP_KEY exists
-if ! php artisan env:display | grep -q 'APP_KEY='; then
-    echo "Generating APP_KEY..."
-    php artisan key:generate --force
-fi
-
+if [ -f .env ]; then
+    if ! php artisan env:display | grep -q 'APP_KEY='; then
+        echo "Generating APP_KEY..."
+        php artisan key:generate --force
+    else
+        echo "APP_KEY already exists"
+    fi
 else
     echo ".env not found, skipping key generation"
 fi
+
 
 # Run database migrations
 echo "Running migrations..."
