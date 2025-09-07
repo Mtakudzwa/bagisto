@@ -40,19 +40,8 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-# Build front-end assets if missing
-echo "Checking front-end assets..."
-THEMES=("shop" "admin")
-for theme in "${THEMES[@]}"; do
-    ASSET_DIR="themes/$theme/default/build"
-    if [ ! -d "$ASSET_DIR" ] || [ -z "$(ls -A $ASSET_DIR)" ]; then
-        echo "Assets missing for $theme theme, building..."
-        npm install --prefix themes/$theme/default
-        npm run production --prefix themes/$theme/default
-    else
-        echo "Assets already built for $theme theme."
-    fi
-done
+# Skip front-end build: use prebuilt assets
+echo "Using prebuilt front-end assets. Skipping npm build."
 
 # Set Apache port
 PORT=${PORT:-8080}
@@ -66,7 +55,7 @@ sed -i "s#/var/www/html#/var/www/html/public#g" /etc/apache2/sites-available/000
 # Ensure correct permissions
 chown -R www-data:www-data /var/www/html
 chmod -R 755 /var/www/html
-chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/themes
 
 # Start Apache in foreground
 echo "Starting Apache..."
