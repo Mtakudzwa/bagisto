@@ -4,10 +4,9 @@ FROM php:8.4-apache
 # Install system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
     git unzip libpng-dev libonig-dev libxml2-dev zip curl mariadb-client libicu-dev libzip-dev g++ \
-    php-cli php-mbstring php-xml php-bcmath php-intl php-sqlite3 \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd intl zip \
-    && docker-php-ext-install calendar || true \
-    && docker-php-ext-enable intl zip
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd intl zip calendar \
+    && a2enmod rewrite
+
 
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
