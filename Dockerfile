@@ -4,8 +4,9 @@ FROM php:8.4-apache
 # Install system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
     git unzip libpng-dev libjpeg-dev libfreetype6-dev libonig-dev libxml2-dev \
+    libwebp-dev \
     zip curl mariadb-client libicu-dev libzip-dev g++ \
-    && docker-php-ext-configure gd --with-jpeg --with-freetype \
+    && docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd intl zip calendar \
     && a2enmod rewrite
 
