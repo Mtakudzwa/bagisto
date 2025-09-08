@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "59892de5656ff055eba2c90bbd4c2724",
+    "content-hash": "6614cda66404fbb8e9d1c79bca0e4c73",
     "packages": [
         {
             "name": "astrotomic/laravel-translatable",
