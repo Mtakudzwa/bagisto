@@ -22,17 +22,19 @@ WORKDIR /var/www/html
 # Copy project files
 COPY . .
 
-# Copy prebuilt theme assets
+# Copy prebuilt theme assets (avoid npm build in container)
 COPY public/themes/shop/default/build /var/www/html/themes/shop/default/build
 COPY public/themes/admin/default/build /var/www/html/themes/admin/default/build
 
-# Install PHP dependencies as www-data to avoid permission issues
+# Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader --working-dir=/var/www/html \
     && chown -R www-data:www-data storage bootstrap/cache vendor themes \
     && chmod -R 775 storage bootstrap/cache
 
-# Install Bagisto GraphQL package (correct package name)
-RUN composer require bagisto/graphql-api --working-dir=/var/www/html --no-interaction --optimize-autoloader || echo "GraphQL package already installed"
+# Install Bagisto GraphQL package (only if not already installed)
+RUN if ! composer show | grep -q "bagisto/graphql-api"; then \
+      composer require bagisto/graphql-api:^2.3 --working-dir=/var/www/html --no-interaction --optimize-autoloader; \
+    fi
 
 # Copy entrypoint script
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
