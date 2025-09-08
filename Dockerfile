@@ -36,6 +36,9 @@ RUN if ! composer show | grep -q "bagisto/graphql-api"; then \
       composer require bagisto/graphql-api:^2.3 --working-dir=/var/www/html --no-interaction --optimize-autoloader; \
     fi
 
+# Ensure storage directory exists for symlinks
+RUN mkdir -p storage/app/public
+
 # Copy entrypoint script
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh

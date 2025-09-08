@@ -26,13 +26,19 @@ else
     echo "Database already seeded, skipping seeders..."
 fi
 
-# Install Bagisto GraphQL if package exists
-if composer show | grep -q "bagisto/graphql-api"; then
+# Install Bagisto GraphQL only if not already configured
+if [ ! -f config/lighthouse.php ]; then
     echo "Installing Bagisto GraphQL..."
     php artisan bagisto-graphql:install --no-interaction || echo "GraphQL already installed, skipping..."
 else
-    echo "Bagisto GraphQL package not installed, skipping..."
+    echo "GraphQL already installed, skipping..."
 fi
+
+# Ensure storage directories exist
+mkdir -p storage/app/public
+
+# Create storage symlink (ignore error if already exists)
+php artisan storage:link || true
 
 # Cache config, routes, views
 echo "Caching config and routes..."
@@ -42,7 +48,6 @@ php artisan view:clear
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
-php artisan storage:link
 
 # Use prebuilt assets
 echo "Using prebuilt front-end assets. Skipping npm build."
@@ -56,7 +61,7 @@ sed -i "s/Listen 80/Listen ${PORT}/g" /etc/apache2/ports.conf
 # Point Apache to Laravel public folder
 sed -i "s#/var/www/html#/var/www/html/public#g" /etc/apache2/sites-available/000-default.conf
 
-# Permissions
+# Fix permissions
 chown -R www-data:www-data /var/www/html
 chmod -R 755 /var/www/html
 chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/themes
